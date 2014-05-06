@@ -86,6 +86,31 @@ $.widget( "mobile.table", $.mobile.table, {
 	_addLabels: function( cells, label, text ) {
 		// .not fixes #6006
 		cells.not( ":has(b." + label + ")" ).prepend( "<b class='" + label + "'>" + text + "</b>"  );
+	},
+
+	_destroy: function() {
+		var colstartAttr;
+
+		if ( this.options.mode === "reflow" ) {
+			colstartAttr = "data-" + $.mobile.ns + "colstart";
+
+			// We remove these attributes because they're added during refresh, so we can't tell
+			// whether they've been present in the initial markup or not
+			this.element
+				.children( "thead" )
+					.find( "[" + colstartAttr + "]" )
+						.removeAttr( colstartAttr );
+
+			if ( !this.options.enhanced ) {
+				this.element
+					.removeClass( this.options.classes.reflowTable )
+					.children( "tbody" )
+						.find( "b." + this.options.classes.cellLabels )
+						.remove();
+			}
+		}
+
+		return this._superApply( arguments );
 	}
 });
 
